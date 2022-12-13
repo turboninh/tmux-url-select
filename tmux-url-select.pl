@@ -9,7 +9,6 @@ use warnings;
 
 ### config
 
-use constant COMMAND => 'xdg-open %s';
 use constant YANK_COMMAND => 'echo %s | xclip -i';
 
 use constant SHOW_STATUS_BAR => 1;
@@ -21,6 +20,16 @@ use constant HIDE_WINDOW => 1;
 use constant PROMPT_COLOR => "\033[42;30m";
 use constant ACTIVE_LINK_HIGHLIGHT => "\033[44;4m";
 use constant NORMAL_LINK_HIGHLIGHT => "\033[94;1;4m";
+
+use constant OPEN_COMMAND => 'xdg-open %s';
+
+# Mac override
+my $osname = $^O;
+
+if( $osname eq 'darwin' ){{
+    use constant OPEN_COMMAND => 'open %s';
+}}
+
 
 # other options:
 # - blue background, underlined: \033[44;4m
@@ -143,7 +152,7 @@ sub launch_url {
     my $url = fix_url(shift);
     tmux_switch_to_last() if shift;
 
-    my $command = sprintf(COMMAND, single_quote_escape($url));
+    my $command = sprintf(OPEN_COMMAND, single_quote_escape($url));
     safe_exec($command, "Launched ". $url);
 }
 
